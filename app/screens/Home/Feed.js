@@ -12,38 +12,39 @@ import { FlatList } from 'react-native';
 
 const Feed = ({ navigation }) => {
   const data = [
-    { key: 'banner' },
     { key: 'danhmuc' },
+    { key: 'banner' },
     { key: 'sanpham' },
     { key: 'sanphammoi' }
   ];
 
   return (
     <SafeAreaView style={{flex:1, marginHorizontal:16}}>
-       <FeedHeader feedText={"E-commer"} feedIcon={"bell-o"} notificationCount={3} />
+       <FeedHeader feedText={"Watch-Man"} feedIcon={"bell-o"} notificationCount={3} />
        <TimKiem icon="search" placeholder={"nhập sản phẩm muốn tìm"} />
       <FlatList
         data={data}
         keyExtractor={(item) => item.key}
         renderItem={({ item }) => {
           switch (item.key) {
-            case 'banner':
+            
+            case 'danhmuc':
+              return (
+                <View style={{marginTop:10}}>
+                  <Text style={{fontSize:22, fontWeight:"bold"}}></Text>
+                  <DanhMuc />
+                </View>
+              );
+              case 'banner':
               return (
                 <>                 
                   <Banner />
                 </>
               );
-            case 'danhmuc':
-              return (
-                <View style={{marginTop:10}}>
-                  <Text style={{fontSize:22, fontWeight:"bold"}}>Xem thêm</Text>
-                  <DanhMuc />
-                </View>
-              );
             case 'sanpham':
               return (
                 <View style={{marginTop:10, flex:1}}>
-                  <Text style={{fontSize:22, fontWeight:"bold"}}>Sản phẩm nổi bật</Text>
+                  <Text style={{fontSize:22, fontWeight:"bold"}}>Sản phẩm HOT</Text>
                   <SanPham />
                 </View>
               );

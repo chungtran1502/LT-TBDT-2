@@ -26,9 +26,6 @@ const SanPham = () => {
               style={styles.image}
             />
             <Text style={styles.productName}>{item.name}</Text>
-            {/* <View style={styles.infoContainer}>
-              <Text>{item.information}</Text>
-            </View> */}
             <View style={styles.ratingContainer}>
               <Text>{item.color}</Text>
               <Text> | </Text>
@@ -44,12 +41,12 @@ const SanPham = () => {
             <Text style={styles.price}>{item.price}</Text>
           </TouchableOpacity>
         }
-        numColumns={2}
-        columnWrapperStyle={styles.columnWrapper}
-        showsVerticalScrollIndicator={false}
+        horizontal={true} // Hiển thị theo chiều ngang
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.horizontalList}
       />
     </View>
-  )
+  );
 }
 
 export default SanPham;
@@ -71,7 +68,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 20,
     width: ITEM_WIDTH,
-    marginRight:10
+    marginRight: 10
   },
   image: {
     width: 150,
@@ -81,10 +78,6 @@ const styles = StyleSheet.create({
   productName: {
     fontWeight: 'bold',
     marginVertical: 5,
-  },
-  infoContainer: {
-    flexDirection: "row",
-    marginHorizontal: 5,
   },
   ratingContainer: {
     flexDirection: "row",
@@ -100,7 +93,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 5,
   },
-  columnWrapper: {
-    justifyContent: "space-between",
+  horizontalList: {
+    paddingHorizontal: 10, // Thêm padding ngang nếu cần
   },
 });

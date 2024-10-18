@@ -15,11 +15,6 @@ const accountData = {
 };
 
 const notifications = [
-  { id: '1', title: 'Khuyến mãi', description: 'Đại hạ giá, sale toàn cầu!', count: 18 },
-  { id: '2', title: 'Live & Video', description: 'Săn mã 50k đơn 0đ', count: 13 },
-  { id: '3', title: 'Thông tin Tài chính', description: 'DEAL ĐỘC QUYỀN TRẢ GÓP 0%!', count: 12 },
-  { id: '4', title: 'Cập nhật Đơn hàng', description: 'Wellcome to VietNam', count: 12 },
-  { id: '5', title: 'Giải Thưởng Khách hàng', description: 'Duy nhất hôm nay tại Quà tặng  Xu', count: 13 },
 ];
 
 const NotificationItem = ({ title, description, count }) => (
@@ -129,7 +124,7 @@ const SecondRoute = () => (
       <SanPham />
     </View>
     <View style={{ marginTop: 20 }}>
-      <Text style={{ fontSize: 22, fontWeight: 'bold', padding: 5 }}>Thông báo</Text>
+      <Text style={{ fontSize: 22, fontWeight: 'bold', padding: 5 }}></Text>
       <FlatList
         data={notifications}
         keyExtractor={(item) => item.id}
@@ -156,7 +151,7 @@ export default function TabViewExample() {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     { key: 'first', title: 'Tài khoản' },
-    { key: 'second', title: 'History' },
+    // { key: 'second', title: 'History' },
   ]);
 
   return (
@@ -174,7 +169,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#fff',
-    alignItems: 'center', // Căn giữa nội dung
+    alignItems: 'center', 
   },
   avatar: {
     width: 100,
@@ -186,18 +181,18 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#3c444c', // Cùng màu chữ với trang đăng nhập
+    color: '#3c444c', 
     marginBottom: 10,
   },
   input: {
     height: 40,
     borderColor: '#ddd',
     borderWidth: 1,
-    borderRadius: 10, // Bo tròn góc
+    borderRadius: 10, 
     marginBottom: 15,
     paddingHorizontal: 10,
     width: '100%',
-    backgroundColor: '#f2f2f2', // Nền giống trang đăng nhập
+    backgroundColor: '#f2f2f2', 
   },
   row: {
     flexDirection: 'row',
@@ -209,52 +204,52 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   buttonRow: {
-    flexDirection: 'column', // Sắp xếp nút theo chiều dọc
-    alignItems: 'center', // Căn giữa
+    flexDirection: 'column', 
+    alignItems: 'center', 
     marginTop: 20,
     width: '100%',
   },
   editButton: {
-    width: '100%', // Đặt chiều rộng của nút là 100%
-    height: 50, // Tăng chiều cao của nút
-    backgroundColor: '#ADD8E6', // Màu cho nút Chỉnh sửa
-    borderRadius: 10, // Bo tròn góc cho nút bấm
+    width: '100%', 
+    height: 50, 
+    backgroundColor: '#ADD8E6',
+    borderRadius: 10, 
     padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 15, // Khoảng cách giữa các nút
+    marginBottom: 15, 
   },
   saveButton: {
-    width: '100%', // Đặt chiều rộng của nút là 100%
-    height: 50, // Tăng chiều cao của nút
-    backgroundColor: '#ADD8E6', // Màu cho nút Lưu
-    borderRadius: 10, // Bo tròn góc cho nút bấm
+    width: '100%',
+    height: 50,
+    backgroundColor: '#ADD8E6',
+    borderRadius: 10,
     padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 15, // Khoảng cách giữa các nút
+    marginBottom: 15,
   },
   accountButton: {
-    width: '100%', // Đặt chiều rộng của nút là 100%
-    height: 50, // Tăng chiều cao của nút
-    backgroundColor: '#3c99dc', // Màu cho nút Đổi tài khoản
-    borderRadius: 10, // Bo tròn góc cho nút bấm
+    width: '100%',
+    height: 50,
+    backgroundColor: '#3c99dc',
+    borderRadius: 10,
     padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 15, // Khoảng cách giữa các nút
+    marginBottom: 15,
   },
   logoutButton: {
-    width: '100%', // Đặt chiều rộng của nút là 100%
-    height: 50, // Tăng chiều cao của nút
-    backgroundColor: '#f44336', // Màu cho nút Đăng xuất
-    borderRadius: 10, // Bo tròn góc cho nút bấm
+    width: '100%',
+    height: 50,
+    backgroundColor: '#f44336',
+    borderRadius: 10,
     padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
   buttonText: {
-    color: 'white', // Màu chữ nút
+    color: 'white',
     fontWeight: 'bold',
   },
   notificationItem: {
