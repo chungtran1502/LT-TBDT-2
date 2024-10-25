@@ -1,44 +1,65 @@
-import React, { useState,useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, FlatList, Alert } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { color } from './ListSanPham';
-import SanPham from './SanPhamLienQuan';
-import { CartContext } from '../Home/CartContext';
+import { CartContext } from '../Home/CartContext'; // Đảm bảo import CartContext
 
-const DetailSanPham = ({ route,navigation }) => {
-  const { sanPham } = route.params;
+const DetailSanPham = ({ route, navigation }) => {
+  const { id } = route.params; // Lấy id sản phẩm từ route params
+  const [sanPham, setSanPham] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const [cart, setCart] = useState([]);
+  const { addToCart } = useContext(CartContext);
 
-  // const { addToCart } = useContext(CartContext);
+  useEffect(() => {
+    // Gọi API để lấy chi tiết sản phẩm từ Fake Store API
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch(`https://fakestoreapi.com/products/${id}`);
+        const productData = await response.json();
+        setSanPham(productData); // Cập nhật dữ liệu sản phẩm
+      } catch (error) {
+        console.error('Lỗi khi tải sản phẩm:', error);
+      }
+    };
+    fetchProduct();
+  }, [id]);
+
   const handleAddToCart = () => {
-    const newProduct = { ...sanPham, quantity };
-    setCart([...cart, newProduct]);
+    if (sanPham) {
+      addToCart(sanPham, quantity);
 
-    Alert.alert(
-      "Thành công!",
-      `${quantity} sản phẩm đã được thêm vào giỏ hàng!`,
-      [
-        { text: "Tiếp tục mua hàng", onPress: () => console.log("Tiếp tục mua hàng") },
-        { text: "Xem giỏ hàng", onPress: () => navigation.navigate('Cart') }
-      ]
-    );
+      Alert.alert(
+        "Thành công!",
+        `${quantity} sản phẩm đã được thêm vào giỏ hàng!`,
+        [
+          { text: "Tiếp tục mua hàng", onPress: () => console.log("Tiếp tục mua hàng") },
+          { text: "Xem giỏ hàng", onPress: () => navigation.navigate('Cart') }
+        ]
+      );
+    }
   };
 
-  // Tạo danh sách dữ liệu cho FlatList
+  // Nếu sản phẩm chưa được tải về từ API, hiển thị màn hình loading
+  if (!sanPham) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Đang tải...</Text>
+      </View>
+    );
+  }
+
   const data = [
-    { key: 'image', content: <Image source={sanPham.image} style={styles.image} /> },
-    { key: 'title', content: <Text style={styles.title}>{sanPham.name}</Text> },
-    { key: 'info', content: <Text style={styles.info}>{sanPham.information}</Text> },
-    { key: 'price', content: <Text style={styles.price}>{sanPham.price}</Text> },
+    { key: 'image', content: <Image source={{ uri: sanPham.image }} style={styles.image} /> },
+    { key: 'title', content: <Text style={styles.title}>{sanPham.title}</Text> },
+    { key: 'info', content: <Text style={styles.info}>{sanPham.description}</Text> },
+    { key: 'price', content: <Text style={styles.price}>{sanPham.price.toLocaleString()}₫</Text> },
     {
       key: 'color',
       content: (
         <View>
           <Text style={styles.color}>
-            Màu sắc: {sanPham.color} | 
-            <Text style={styles.rating}>{sanPham.rating}
-              <FontAwesome name="star" size={16} color={color.COLOR_PRIMARY} />
+            Màu sắc: {sanPham.color || 'N/A'} | 
+            <Text style={styles.rating}>{sanPham.rating?.rate || 'N/A'}
+              <FontAwesome name="star" size={16} color="#ff9900" />
             </Text>
           </Text>
         </View>
@@ -63,67 +84,6 @@ const DetailSanPham = ({ route,navigation }) => {
         </View>
       )
     },
-    {
-      key: 'specs', 
-      content: (
-        <View style={styles.specsContainer}>
-          <Text style={styles.specTitle}>Thông số kỹ thuật</Text>
-          <View style={styles.specItem}>
-            <Text style={styles.specLabel}>CPU:</Text>
-            <Text style={styles.specValue}>{sanPham.cpu}</Text>
-          </View>
-          <View style={styles.specItem}>
-            <Text style={styles.specLabel}>RAM:</Text>
-            <Text style={styles.specValue}>{sanPham.ram}</Text>
-          </View>
-          <View style={styles.specItem}>
-            <Text style={styles.specLabel}>Lưu trữ:</Text>
-            <Text style={styles.specValue}>{sanPham.storage}</Text>
-          </View>
-          <View style={styles.specItem}>
-            <Text style={styles.specLabel}>Màn hình:</Text>
-            <Text style={styles.specValue}>{sanPham.screen}</Text>
-          </View>
-          <View style={styles.specItem}>
-            <Text style={styles.specLabel}>GPU:</Text>
-            <Text style={styles.specValue}>{sanPham.gpu}</Text>
-          </View>
-          <View style={styles.specItem}>
-            <Text style={styles.specLabel}>Trọng lượng:</Text>
-            <Text style={styles.specValue}>{sanPham.weight}</Text>
-          </View>
-        </View>
-      )
-    }, 
-    // {
-    //   key: 'infomore', 
-    //   content: (
-    //     <View style={styles.infomoreContainer}>
-    //       <Text style={styles.infomoreTitle}>Thông tin đi kèm</Text>
-    //       <View style={styles.infomoreItem}>
-    //         <Text style={styles.infomoreLabel}>Phụ kiện:</Text>
-    //         <Text style={styles.infomoreValue}>{sanPham.pkien}</Text>
-    //       </View>
-    //       <View style={styles.infomoreItem}>
-    //         <Text style={styles.infomoreLabel}>Bảo hành:</Text>
-    //         <Text style={styles.infomoreValue}>{sanPham.bhanh}</Text>
-    //       </View>
-    //       <View style={styles.infomoreItem}>
-    //         <Text style={styles.infomoreLabel}>Ưu đãi:</Text>
-    //         <Text style={styles.infomoreValue}>{sanPham.udai}</Text>
-    //       </View>
-    //     </View>
-    //   )
-    // }, 
-    ///{
-     // key: 'relatedProducts',
-      //content: (
-       // <View style={{ marginTop: 10 }}>
-          //<Text style={{ fontSize: 22, fontWeight: 'bold' }}>Sản phẩm tương tự</Text>
-          //<SanPham />
-        //</View>
-      //)
-    //}
   ];
 
   return (
@@ -141,154 +101,84 @@ const DetailSanPham = ({ route,navigation }) => {
       </View>
     </View>
   );
-};  
+}
 
 export default DetailSanPham;
-
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 16,
   },
-  contentContainer: {
-    padding: 20,
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   image: {
     width: '100%',
     height: 300,
-    borderRadius: 10,
-    marginBottom: 20,
-    resizeMode: 'cover',
+    resizeMode: 'contain',
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  rating: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 15,
-    textAlign: 'center',
-    marginRight: 20,
-  },
-  price: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#e74c3c',
-    marginBottom: 15,
-    textAlign: 'center',
+    marginVertical: 10,
   },
   info: {
     fontSize: 16,
-    color: '#7f8c8d',
-    lineHeight: 24,
-    marginBottom: 20,
-    textAlign: 'justify',
-    textAlign: 'center',
+    marginVertical: 5,
+  },
+  price: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginVertical: 10,
   },
   color: {
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#2c3e50',
-    marginBottom: 30,
-    textAlign: 'center',
+    fontSize: 16,
+    marginVertical: 5,
+  },
+  rating: {
+    fontWeight: 'bold',
+    color: '#ff9900',
+    marginLeft: 5,
   },
   quantityContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
-  },
-  quantityInput: {
-    width: 50,
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    textAlign: 'center',
-    marginHorizontal: 10,
+    marginVertical: 10,
   },
   quantityButton: {
     fontSize: 24,
-    color: '#333',
-    paddingHorizontal: 10,
+    padding: 10,
+  },
+  quantityInput: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 5,
+    width: 50,
+    textAlign: 'center',
+    marginHorizontal: 10,
   },
   fixedButtonContainer: {
     position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderColor: '#ccc',
-  },
-  addButton: {
-    padding: 15,
-    backgroundColor: '#e74c3c',
-    borderRadius: 10,
+    bottom: 20,
+    left: 0,
+    right: 0,
     alignItems: 'center',
   },
+  addButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+  },
   addButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
     fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white',
   },
-  specsContainer: {
-    marginBottom: 20,
-    padding: 10,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
-  specTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 15,
-  },
-  specItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 5,
-  },
-  specLabel: {
-    fontWeight: '500',
-    fontSize: 16,
-    color: '#333',
-  },
-  specValue: {
-    fontSize: 16,
-    color: '#555',
-  },
-  //thong tin di kem
-  infomoreContainer: {
-    marginBottom: 20,
-    padding: 10,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
-  infomoreTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 15,
-  },
-  infomoreItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 5,
-  },
-  infomoreLabel: {
-    fontWeight: '500',
-    fontSize: 16,
-    color: '#333',
-  },
-  infomoreValue: {
-    fontSize: 16,
-    color: '#555',
+  contentContainer: {
+    paddingBottom: 100, // Để tránh chồng lên nút thêm vào giỏ hàng
   },
 });

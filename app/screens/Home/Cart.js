@@ -1,73 +1,25 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity } from 'react-native';
-
-// Dữ liệu sản phẩm (giả sử bạn đã có sản phẩm trong giỏ hàng)
-const initialCart = [
-  {
-    id: '01',
-    name: 'Đồng hồ nam Tissot PRX',
-    image: require('../../../assets/images/p2.png'),
-    quantity: 1,
-    price: 39799999,
-  },
-  {
-    id: '02',
-    name: 'Đồng hồ nam Longines Conquest',
-    image: require('../../../assets/images/p3.png'),
-    quantity: 1,
-    price: 38833388,
-  },
-  {
-    id: '03',
-    name: 'Đồng hồ nam Seiko 5 Sports',
-    image: require('../../../assets/images/3.jpg'),
-    quantity: 2,
-    price: 33336666,
-  },
-];
+import React, { useEffect, useContext } from 'react';
+import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
+import { CartContext } from '../Home/CartContext'; // Import CartContext
 
 const Carts = ({ navigation }) => {
-  const [cartItems, setCartItems] = useState(initialCart);
+  const { cartItems, removeItem, increaseQuantity, decreaseQuantity, calculateTotal } = useContext(CartContext); // Dùng CartContext để lấy cartItems
 
-  // Hàm tính tổng tiền giỏ hàng
-  const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-  };
-
-  // Hàm để tăng số lượng sản phẩm
-  const increaseQuantity = (id) => {
-    setCartItems((prevCartItems) =>
-      prevCartItems.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
-    );
-  };
-
-  // Hàm để giảm số lượng sản phẩm
-  const decreaseQuantity = (id) => {
-    setCartItems((prevCartItems) =>
-      prevCartItems.map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
-    );
-  };
-
-  // Hàm xóa sản phẩm khỏi giỏ hàng
-  const removeItem = (id) => {
-    setCartItems((prevCartItems) =>
-      prevCartItems.filter((item) => item.id !== id)
-    );
+  const handlePayment = () => {
+    if (cartItems.length === 0) {
+      Alert.alert("Thông báo", "Không có đơn hàng, không thể thanh toán");
+    } else {
+      navigation.navigate('Payment'); // Điều hướng đến màn hình thanh toán
+    }
   };
 
   const renderCartItem = ({ item }) => (
     <View style={styles.cartItem}>
-      <Image source={item.image} style={styles.productImage} />
+      <Image source={{ uri: item.image }} style={styles.productImage} />
       <View style={styles.productDetails}>
-        <Text style={styles.productName}>{item.name}</Text>
+        <Text style={styles.productName}>{item.title}</Text>
         <Text>Giá: {(item.price * item.quantity).toLocaleString()}₫</Text>
-
+  
         <View style={styles.quantityContainer}>
           <TouchableOpacity onPress={() => decreaseQuantity(item.id)} style={styles.quantityButton}>
             <Text style={styles.buttonText}>-</Text>
@@ -90,13 +42,13 @@ const Carts = ({ navigation }) => {
       <FlatList
         data={cartItems}
         renderItem={renderCartItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
       />
       <View style={styles.totalContainer}>
         <Text style={styles.totalText}>Tổng cộng: {calculateTotal().toLocaleString()}₫</Text>
         <TouchableOpacity
-          style={styles.paymentButton} // Sử dụng style mới
-          onPress={() => navigation.navigate('Payment')}
+          style={styles.paymentButton}
+          onPress={handlePayment} // Gọi hàm xử lý thanh toán
         >
           <Text style={styles.paymentButtonText}>Thanh toán</Text>
         </TouchableOpacity>
@@ -124,7 +76,7 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#f9f9f9',
     borderRadius: 10,
-    alignItems: 'center', 
+    alignItems: 'center',
   },
   productImage: {
     width: 80,
@@ -181,7 +133,7 @@ const styles = StyleSheet.create({
   },
   paymentButton: {
     padding: 10,
-    backgroundColor: '#ADD8E6', // Màu sắc cho nút thanh toán
+    backgroundColor: '#ff4040',
     borderRadius: 5,
     alignItems: 'center',
     justifyContent: 'center',

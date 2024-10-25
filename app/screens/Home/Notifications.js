@@ -1,66 +1,54 @@
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, Image } from 'react-native';
-import React, { useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
+import React from 'react';
 
-// Dữ liệu đơn hàng (giả sử bạn đã có thông tin đơn hàng)
-const orders = [
-  {
-    id: '1',
-    items: [
-      { name: 'Đồng hồ nam Casio G-Shock', quantity: 1, image: require("../../../assets/images/p2.png") },
-      { name: 'Đồng hồ nam Orient Bambino', quantity: 2, image: require("../../../assets/images/icon.png") },
-    ],
-    orderDate: '2024-09-20',
-    status: 'Đang giao hàng',
-  },
-  {
-    id: '2',
-    items: [
-      { name: 'Đồng hồ nam Citizen Eco-Drive', quantity: 1, image: require("../../../assets/images/p3.png") },
-    ],
-    orderDate: '2024-09-18',
-    status: 'Đang đợi duyệt',
-  },
-];
+// Icon Paths
+const icons = {
+  waitingConfirmation: require("../../../assets/icons/waiting-confirmation.png"),
+  waitingPickup: require("../../../assets/icons/waiting-pickup.png"),
+  delivering: require("../../../assets/icons/delivering.png"),
+  rating: require("../../../assets/icons/rating.png"),
+  // wallet: require("../../../assets/icons/wallet.png"),
+  // vouchers: require("../../../assets/icons/vouchers.png"),
+  // helpCenter: require("../../../assets/icons/help-center.png"),
+  // settings: require("../../../assets/icons/settings.png"), 
+};
 
 const Notifications = () => {
-  const [expandedOrderId, setExpandedOrderId] = useState(null);
+  const utilities = [
+    { name: 'Chờ xác nhận', icon: icons.waitingConfirmation },
+    { name: 'Chờ lấy hàng', icon: icons.waitingPickup },
+    { name: 'Đang giao hàng', icon: icons.delivering },
+    { name: 'Đánh giá', icon: icons.rating },
+  ];
 
-  const toggleOrderDetails = (orderId) => {
-    setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
-  };
+  // Bạn có thể giữ lại phần này nhưng không render nếu không muốn hiển thị
+  const extraUtilities = [
+    { name: 'Ví Shopee', icon: icons.wallet },
+    { name: 'Kho Voucher', icon: icons.vouchers },
+    { name: 'Trung tâm trợ giúp', icon: icons.helpCenter },
+    { name: 'Cài đặt', icon: icons.settings },
+  ];
 
-  const renderOrderItem = ({ item }) => (
-    <View style={styles.orderItem}>
-      <TouchableOpacity onPress={() => toggleOrderDetails(item.id)}>
-        <Text style={styles.orderTitle}>Đơn hàng #{item.id}</Text>
-        <Text>Ngày đặt: {item.orderDate}</Text>
-        <Text>Trạng thái: {item.status}</Text>
-      </TouchableOpacity>
-
-      {expandedOrderId === item.id && (
-        <View style={styles.details}>
-          {item.items.map((product, index) => (
-            <View key={index} style={styles.productItem}>
-              <Image source={product.image} style={styles.productImage} />
-              <View style={styles.productInfo}>
-                <Text>{product.name}</Text>
-                <Text>Số lượng: {product.quantity}</Text>
-              </View>
-            </View>
-          ))}
-        </View>
-      )}
-    </View>
+  const renderUtilityButton = (item, index) => (
+    <TouchableOpacity key={index} style={styles.utilityButton}>
+      <Image source={item.icon} style={styles.utilityIcon} />
+      <Text style={styles.utilityText}>{item.name}</Text>
+    </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Đơn hàng của bạn</Text>
-      <FlatList
-        data={orders}
-        renderItem={renderOrderItem}
-        keyExtractor={(item) => item.id}
-      />
+      
+      {/* Section for main utilities */}
+      <View style={styles.utilitiesRow}>
+        {utilities.map(renderUtilityButton)}
+      </View>
+
+      {/* Uncomment the section below if you want to include extra utilities */}
+      {/* <View style={styles.extraUtilities}>
+        {extraUtilities.map(renderUtilityButton)}
+      </View> */}
     </View>
   );
 };
@@ -78,32 +66,28 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  orderItem: {
-    padding: 10,
-    marginBottom: 10,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 5,
-  },
-  orderTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  details: {
-    paddingTop: 10,
-    paddingLeft: 10,
-  },
-  productItem: {
+  utilitiesRow: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  extraUtilities: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  utilityButton: {
+    width: '22%',
     alignItems: 'center',
-    marginVertical: 5,
+    marginBottom: 15,
   },
-  productImage: {
-    width: 50, // Set the desired width
-    height: 50, // Set the desired height
-    borderRadius: 5, // Optional: for rounded corners
-    marginRight: 10, // Space between image and text
+  utilityIcon: {
+    width: 40,
+    height: 40,
+    marginBottom: 5,
   },
-  productInfo: {
-    flex: 1,
+  utilityText: {
+    fontSize: 14,
+    textAlign: 'center',
   },
 });
